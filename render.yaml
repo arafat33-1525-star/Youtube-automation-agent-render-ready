@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: youtube-automation-agent
+    runtime: node
+    plan: starter          # Free tier has no persistent disk and no shell access — this app needs both
+    region: oregon          # change if you want a different region
+    buildCommand: npm install
+    # Redirects the app's local "data" and "uploads" folders onto the persistent disk
+    # before starting, so the SQLite DB, scripts, audio, and rendered videos survive
+    # every redeploy and restart instead of disappearing.
+    startCommand: >
+      mkdir -p /var/data/data /var/data/uploads &&
+      rm -rf ./data ./uploads &&
+      ln -s /var/data/data ./data &&
+      ln -s /var/data/uploads ./uploads &&
+      node index.js
+    healthCheckPath: /health
+    disk:
+      name: agent-storage
+      mountPath: /var/data
+      sizeGB: 5
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DEFAULT_PRIVACY_STATUS
+        value: private
+      # --- Fill these in from the Render dashboard (Environment tab) — do not commit real keys ---
+      - key: OPENAI_API_KEY        # or GEMINI_API_KEY / OPENROUTER_API_KEY etc. — only one is required
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: CHANNEL_NAME
+        sync: false
+      - key: DEFAULT_AUTHOR
+        sync: false
+      - key: TARGET_AUDIENCE
+        sync: false
+      - key: API_KEY               # optional: protects POST /generate and /publish/:id
+        sync: false
