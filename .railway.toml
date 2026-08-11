@@ -1,0 +1,24 @@
+# Railway Configuration
+
+[build]
+# Use Dockerfile for custom build process
+dockerfile = "Dockerfile"
+
+[deploy]
+# Start command
+startCommand = "npm start"
+# Number of replicas
+replicas = 1
+# Restart policy
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 5
+
+# Environment variables can be set in Railway dashboard
+# Required variables:
+# - OPENAI_API_KEY (or any AI provider API key)
+# - GOOGLE_APPLICATION_CREDENTIALS (for YouTube auth)
+# - NODE_ENV=production
+# - PORT=3456 (set automatically by Railway)
+
+# Port configuration
+port = 3456
